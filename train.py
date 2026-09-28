@@ -290,8 +290,13 @@ t0 = time.time()
 local_iter_num = 0 # number of iterations in the lifetime of this process
 raw_model = model.module if ddp else model # unwrap DDP container if needed
 running_mfu = -1.0
+graph = False
 while True:
 
+    if iter_num in [1, max_iters/2, max_iters -1]:
+        graph = True
+        torch.cuda.memory._record_memory_history()
+    
     # determine and set the learning rate for this iteration
     lr = get_lr(iter_num) if decay_lr else learning_rate
     for param_group in optimizer.param_groups:
@@ -365,7 +370,8 @@ while True:
         print(f"iter {iter_num}: loss {lossf:.4f}, time {dt*1000:.2f}ms, mfu {running_mfu*100:.2f}%")
     iter_num += 1
     local_iter_num += 1
-
+    if graph:
+        torch.cuda.memory._dump_snapshot(f"epoch_{iter_num}_memory.pickle")
     # termination conditions
     if iter_num > max_iters:
         break
