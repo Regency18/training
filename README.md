@@ -31,9 +31,3 @@ python data/shakespeare_char/prepare.py
 python train.py config/train_shakespeare_char.py
 ```
 The link for the pytorch memory visualizer : [memory_viz](https://pytorch.org/memory_viz) <3
-
-Here's my graphs that I got: 
-[epoch 1]()
-[epoch 50]()
-[epoch 99]()
-[full 100 epochs]()
